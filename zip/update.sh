@@ -17,36 +17,43 @@ safe_remove() {
     fi
 }
 
-# --- 3. THE DEBLOAT LIST ---
-ui_print "Starting Samsung Deep Debloat..."
+# --- 3. THE ULTIMATE DEBLOAT LIST ---
+ui_print "Starting Total Cleanse (Keeping Play Store)..."
 
-# Bixby Ecosystem (Heavy Background Services)
+# --- GOOGLE 'CRAP' (Minus Play Store/Services) ---
+safe_remove "/system/app/Google"               # Google Search App
+safe_remove "/system/app/Chrome"               # Heavy RAM user
+safe_remove "/system/app/YouTube"              
+safe_remove "/system/app/Drive"                
+safe_remove "/system/app/Maps"                 
+safe_remove "/system/app/Photos"               
+safe_remove "/system/app/Gmail2"               
+safe_remove "/system/app/Duo"                  
+safe_remove "/system/app/GoogleTTS"            
+safe_remove "/system/app/Music2"               
+safe_remove "/system/app/Videos"               
+safe_remove "/system/app/Keep"                 
+safe_remove "/system/app/Books"
+safe_remove "/system/app/Magazines"
+
+# --- BIXBY & AR FEATURES ---
 safe_remove "/system/priv-app/BixbyWakeup"
 safe_remove "/system/app/BixbyService"
-safe_remove "/system/app/BixbyVisionFramework"
 safe_remove "/system/priv-app/BixbyAgent"
-safe_remove "/system/app/BixbyDictation"
-
-# AR & Emoji Features (Large File Sizes)
 safe_remove "/system/app/ArZone"
 safe_remove "/system/app/AREmoji"
 safe_remove "/system/app/AREmojiEditor"
-safe_remove "/system/app/ARPictureEditor"
 
-# Original Core & Social Bloat
+# --- SAMSUNG & MICROSOFT ---
 safe_remove "/product/priv-app/SamsungFree"
 safe_remove "/system/app/SamsungTVPlus"
 safe_remove "/product/app/SamsungKids"
 safe_remove "/product/app/SamsungGlobalGoals"
-safe_remove "/system/app/Facebook_installer"
-safe_remove "/system/app/Facebook_services"
-
-# Microsoft & Others
 safe_remove "/system/app/OneDrive"
 safe_remove "/system/app/Office_Hub"
 safe_remove "/system/app/LinkedIn"
-safe_remove "/system/app/YouTubeMusic"
-safe_remove "/system/app/Spotify"
+safe_remove "/system/app/Facebook_installer"
+safe_remove "/system/app/Facebook_services"
 
-ui_print "--- Process Complete ---"
+ui_print "--- Total Cleanse Complete ---"
 ui_print "Check $BACKUP_DIR for your backups."
