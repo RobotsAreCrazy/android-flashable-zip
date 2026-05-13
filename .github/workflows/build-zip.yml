@@ -1,0 +1,29 @@
+name: Build Flashable Zip
+
+on:
+  push:
+    branches: [ "main" ] # Runs whenever you push to the main branch
+  workflow_dispatch: # Allows you to run it manually from the "Actions" tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install zip utility
+        run: sudo apt-get update && sudo apt-get install -y zip
+
+      - name: Make script executable
+        run: chmod +x flashable.sh
+
+      - name: Build the zip
+        run: ./flashable.sh -o Samsung_Debloat_A9P.zip
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: Debloat-Zip
+          path: Samsung_Debloat_A9P.zip
