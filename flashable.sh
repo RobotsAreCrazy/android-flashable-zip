@@ -1,25 +1,53 @@
-# Setup backup directory on internal storage
-BACKUP_DIR="/sdcard/Debloat_Backup_$(date +%Y%m%d_%H%M%S)"
-mkdir -p "$BACKUP_DIR"
-ui_print "- Backup folder: $BACKUP_DIR"
+#!/bin/bash
 
-# Function to backup and then physically remove the app
-safe_remove() {
-    local APP_PATH="$1"
-    if [ -d "$APP_PATH" ]; then
-        ui_print "- Backing up & removing: $APP_PATH"
-        # Copy the whole folder to backup before deleting
-        cp -af "$APP_PATH" "$BACKUP_DIR/"
-        rm -rf "$APP_PATH"
-    else
-        ui_print "- Skipped (not found): $APP_PATH"
-    fi
+usage() {
+  echo "Usage: $0 [OPTION...]" 1>&2
+  echo "" 1>&2
+  echo "Valid options:" 1>&2
+  echo "  -h             Print this help." 1>&2
+  echo "  -o ZIPFILE     Name of the flashable zip file. Default value is update.zip." 1>&2
+  echo "  -d DIRECTORY   Directory to include in the zip file. Default value is zip." 1>&2
+  echo "  -s             Sideload the flashable zip to the connected Android device." 1>&2
+  exit 1
 }
 
-# --- LIST YOUR TARGETS HERE ---
-# Use folder paths confirmed via OrangeFox File Manager
-safe_remove "/product/priv-app/SamsungFree"
-safe_remove "/system/app/SamsungTVPlus"
-safe_remove "/product/app/SamsungKids"
+error() {
+  echo "Error: $*" >>/dev/stderr
+  exit 1
+}
 
-ui_print "- Debloat and Backup complete!"
+ZIPFILE="update.zip"
+DIR="zip"
+SIDELOAD=false
+
+while getopts ":h:o:d:s" o; do
+  case "${o}" in
+    o) ZIPFILE=${OPTARG} ;;
+    d) DIR=${OPTARG} ;;
+    s) SIDELOAD=true ;;
+    *) usage ;;
+  esac
+done
+
+[ ! -d "$DIR" ] && error "$DIR directory does not exist."
+
+echo "Building $ZIPFILE..."
+current_dir=$(pwd)
+cd "$DIR"
+
+# Zip the contents of the folder
+if [ "${ZIPFILE:0:1}" = "/" ]; then
+  zip -r "$ZIPFILE" . 1>/dev/null 2>/dev/null
+else
+  zip -r "$current_dir/$ZIPFILE" . 1>/dev/null 2>/dev/null
+fi
+
+cd "$current_dir"
+
+# Sideload if the flag is set
+if [ "$SIDELOAD" = true ]; then
+  echo "Sideloading $ZIPFILE..."
+  adb sideload "$ZIPFILE"
+fi
+
+echo "Done."
